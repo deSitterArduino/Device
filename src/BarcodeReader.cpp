@@ -1,5 +1,5 @@
 /*
-  BarcodeReader.cpp - Library for reading barcodes from a 
+  BarcodeReader.cpp - Library for reading barcodes from a
   HobbyTronics USB host controller via an I2C bus.
   Created by Greg Boucher, June 2018
 */
@@ -7,7 +7,7 @@
 #include "BarcodeReader.h"
 
 namespace Device_lib {
-  
+
     BarcodeReader::BarcodeReader()
         :hostBuffer{""},
         slaveSize{0}
@@ -27,26 +27,34 @@ namespace Device_lib {
          Wire.requestFrom(slaveAddress, 1);
          while (Wire.available())
          {
-           slaveSize = Wire.read();
+                 slaveSize = Wire.read();
+                 index = slaveSize;
          }
-
-         return (slaveSize > 0) ? slaveSize : slaveSize = 0;
+         if (slaveSize > 0) {
+             return slaveSize;
+         } else {
+             index = 0;
+             return slaveSize = 0;
+         }
+         //return (slaveSize > 0) ? slaveSize : slaveSize = 0;
     }
-    
+
     void BarcodeReader::readSlaveBuffer() {
-        clearHostBuffer();
+        //clearHostBuffer();
         Wire.beginTransmission(slaveAddress);
         Wire.write(slaveBufferAddress);
         Wire.endTransmission();
-        Wire.requestFrom(slaveAddress, slaveSize);
-        while (Wire.available())
-        {
-         hostBuffer += char(Wire.read());
+        while (index > 0) {
+            Wire.requestFrom(slaveAddress, index, true);
+            while (Wire.available())
+            {
+                hostBuffer += char(Wire.read());
+                --index;
+            }
         }
     }
 
     void BarcodeReader::clearHostBuffer() {
-        //memset(hostBuffer, 0, sizeof(hostBuffer));
         hostBuffer = "";
     }
 
@@ -58,19 +66,19 @@ namespace Device_lib {
     }
 
     bool BarcodeReader::isValid() {
-        
+        return true;
     }
 
     String BarcodeReader::getBarcode() {
         return hostBuffer;
     }
-  
-    
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
 
 
 }

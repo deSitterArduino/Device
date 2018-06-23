@@ -1,5 +1,5 @@
 /*
-  BarcodeReader.h - Library for reading barcodes from a 
+  BarcodeReader.h - Library for reading barcodes from a
   HobbyTronics USB host controller via an I2C bus.
   Created by Greg Boucher, June 2018
 */
@@ -17,16 +17,17 @@ namespace Device_lib {
     {
         public:
             BarcodeReader();                        //!the slave buffer is cleared upon construction! (TODO Change this so we pull from the buffer 32bytes at a time and arrive at the last scanned code)
-            
+
             int readSlaveSize();                    //return the size of the slave buffer
             void readSlaveBuffer();                 //read the contents of the slave buffer into hostBuffer
             String getBarcode();                    //return the current contents of hostBuffer
             int getSlaveSize();
-            
+            int index; 
+
         private:
             void clearHostBuffer();                 //set the local buffer to '\0' null-terminated
             void clearSlaveBuffer();                //clear the buffer on the slave (read I2C to clear)
-            bool isValid();                         //true if the barcode is valid
+            bool isValid();
 
             String hostBuffer;                      //(The slave uses a 256 byte buffer)
             int slaveSize;                          //size(bytes) of the slaves current buffer

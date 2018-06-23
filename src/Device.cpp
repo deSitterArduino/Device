@@ -7,7 +7,7 @@
 #include "BarcodeReader.h"
 
 namespace Device_lib {
-  
+
     Device::Device()
         :keypadDate(this)
     {
@@ -19,17 +19,21 @@ namespace Device_lib {
             if (deviceState != e_SCAN) break;
             Device_lib::BarcodeReader barcodeReader;
             if (barcodeReader.readSlaveSize() > 0) {
-              Serial.println(barcodeReader.getSlaveSize());
+                Serial.print("SLAVE SIZE: ");
+                Serial.println(barcodeReader.getSlaveSize());
+                Serial.print("INDEX SIZE: ");
+                Serial.println(barcodeReader.index);
                 barcodeReader.readSlaveBuffer();
                 return barcodeReader.getBarcode();
             }
         }
         return "";
     }
-    
+
     void Device::updateDeviceState(DeviceState newState) {
         deviceState = newState;
-        Serial.print(deviceState);
+        Serial.print("DEVICE STATE: ");
+        Serial.println(deviceState);
         switch (deviceState) {
             case e_LOCK: {
                 keypadDate.lockCode = "";
@@ -40,7 +44,7 @@ namespace Device_lib {
                 break;
             }
             case e_LIST: {
-                
+
                 break;
             }
             case e_SCAN: {
@@ -52,6 +56,6 @@ namespace Device_lib {
                }
                break;
             }
-        }    
+        }
     }
 }
