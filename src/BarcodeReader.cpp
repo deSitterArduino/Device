@@ -16,29 +16,16 @@ namespace Device_lib {
           pinMode(scanPin, OUTPUT);
     }
 
-    void BarcodeReader::stopScan() {
-        digitalWrite(scanPin, LOW);
+    void BarcodeReader::clearHostBuffer() {
+        hostBuffer = "";
     }
 
-    bool BarcodeReader::Scan() {
-        if (digitalRead(scanPin) == LOW) digitalWrite(scanPin, HIGH);
+    void BarcodeReader::clearSlaveBuffer() {        //clear the slave buffer by reading all available bytes
         int sizeCheck = readSlaveSize();
         if (sizeCheck > 0) {
-            stopScan();
-            Serial.print("(DEBUG) FIRST PASS SIZE: ");
-            Serial.println(sizeCheck);
-            delay(200);   //required to give the buffer on the host controler time to fill
-            sizeCheck = readSlaveSize();
-            Serial.print("(DEBUG) SECOND PASS SIZE: ");
-            Serial.println(sizeCheck);
             readSlaveBuffer();
-            return true;
+            clearHostBuffer();
         }
-        return false;
-    }
-
-    int BarcodeReader::getSlaveSize() {
-        return slaveSize;
     }
 
     int BarcodeReader::readSlaveSize() {
@@ -60,32 +47,45 @@ namespace Device_lib {
         Wire.write(BufferRegister);
         Wire.endTransmission();
         Wire.requestFrom(slaveAddress, slaveSize);
-        while (Wire.available())
+        while (Wire.available())                    //only reads max 32bytes at a time
         {
             --slaveSize;
             hostBuffer += char(Wire.read());
         }
-        if (slaveSize > 0) readSlaveBuffer();
+        if (slaveSize > 0) readSlaveBuffer();       //keep calling this function until all bytes are read
     }
 
-    void BarcodeReader::clearHostBuffer() {
-        hostBuffer = "";
-    }
-
-    void BarcodeReader::clearSlaveBuffer() {      //clear the slave buffer by reading all available bytes
-        int ss = readSlaveSize();
-        if (ss > 0) {
+    bool BarcodeReader::Scan() {
+        if (digitalRead(scanPin) == LOW) digitalWrite(scanPin, HIGH);
+        int sizeCheck = readSlaveSize();
+        if (sizeCheck > 0) {
+            stopScan();
+            Serial.print("(DEBUG) FIRST PASS SIZE: ");
+            Serial.println(sizeCheck);
+            delay(200);                             //required to give the buffer on the host controler time to fill
+            sizeCheck = readSlaveSize();
+            Serial.print("(DEBUG) SECOND PASS SIZE: ");
+            Serial.println(sizeCheck);
             readSlaveBuffer();
-            clearHostBuffer();
+            return true;
         }
+        return false;
     }
 
-    bool BarcodeReader::isValid() {
-        return true;
+    void BarcodeReader::stopScan() {
+        digitalWrite(scanPin, LOW);
+    }
+
+    byte BarcodeReader::getSlaveSize() {
+        return slaveSize;
     }
 
     String BarcodeReader::getBarcode() {
         return hostBuffer;
+    }
+
+    bool BarcodeReader::isValid() {
+        //TODO
     }
 
 
