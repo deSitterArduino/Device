@@ -16,13 +16,13 @@ namespace Device_lib {
     {
         public:
             Device();
-            DeviceState deviceState = e_LOCK;
+            DeviceState deviceState = e_DATE;       //start at e_LOCK
             KeypadDate keypadDate;
             void updateDeviceState(DeviceState);
-            String beginScan();
+            String beginScan();                     //performs a barcode scan, exiting only if the scan key is released, or a barcode is scanned
 
         private:
-            
+
     };
 }
 #endif //DEVICE_H

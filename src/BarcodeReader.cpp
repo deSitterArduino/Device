@@ -12,7 +12,29 @@ namespace Device_lib {
         :hostBuffer{""},
         slaveSize{0}
     {
-          //clearSlaveBuffer();
+          clearSlaveBuffer();
+          pinMode(scanPin, OUTPUT);
+    }
+
+    void BarcodeReader::stopScan() {
+        digitalWrite(scanPin, LOW);
+    }
+
+    bool BarcodeReader::Scan() {
+        if (digitalRead(scanPin) == LOW) digitalWrite(scanPin, HIGH);
+        int sizeCheck = readSlaveSize();
+        if (sizeCheck > 0) {
+            stopScan();
+            Serial.print("(DEBUG) FIRST PASS SIZE: ");
+            Serial.println(sizeCheck);
+            delay(200);   //required to give the buffer on the host controler time to fill
+            sizeCheck = readSlaveSize();
+            Serial.print("(DEBUG) SECOND PASS SIZE: ");
+            Serial.println(sizeCheck);
+            readSlaveBuffer();
+            return true;
+        }
+        return false;
     }
 
     int BarcodeReader::getSlaveSize() {
@@ -22,36 +44,28 @@ namespace Device_lib {
     int BarcodeReader::readSlaveSize() {
          Wire.begin();
          Wire.beginTransmission(slaveAddress);
-         Wire.write(slaveSizeAddress);
+         Wire.write(SizeRegister);
          Wire.endTransmission();
          Wire.requestFrom(slaveAddress, 1);
          while (Wire.available())
          {
                  slaveSize = Wire.read();
-                 index = slaveSize;
          }
-         if (slaveSize > 0) {
-             return slaveSize;
-         } else {
-             index = 0;
-             return slaveSize = 0;
-         }
-         //return (slaveSize > 0) ? slaveSize : slaveSize = 0;
+         return (slaveSize > 0) ? slaveSize : slaveSize = 0;
     }
 
     void BarcodeReader::readSlaveBuffer() {
-        //clearHostBuffer();
+        clearHostBuffer();
         Wire.beginTransmission(slaveAddress);
-        Wire.write(slaveBufferAddress);
+        Wire.write(BufferRegister);
         Wire.endTransmission();
-        while (index > 0) {
-            Wire.requestFrom(slaveAddress, index, true);
-            while (Wire.available())
-            {
-                hostBuffer += char(Wire.read());
-                --index;
-            }
+        Wire.requestFrom(slaveAddress, slaveSize);
+        while (Wire.available())
+        {
+            --slaveSize;
+            hostBuffer += char(Wire.read());
         }
+        if (slaveSize > 0) readSlaveBuffer();
     }
 
     void BarcodeReader::clearHostBuffer() {
@@ -59,7 +73,8 @@ namespace Device_lib {
     }
 
     void BarcodeReader::clearSlaveBuffer() {      //clear the slave buffer by reading all available bytes
-        if (readSlaveSize() > 0) {
+        int ss = readSlaveSize();
+        if (ss > 0) {
             readSlaveBuffer();
             clearHostBuffer();
         }

@@ -1,9 +1,9 @@
 /*
   KeypadDate.cpp - Wrapper of M. Stanley amd A. Brevig's Keypad Libiary v3.1
-  Changed callback eventListener function's arguments to include a pointer to 
+  Changed callback eventListener function's arguments to include a pointer to
   the instance of this class to which the instance of the Keypad object calling eventListener belongs.
   This is for the purpose of referencing non-static members directly from the static callback function.
-  
+
   Used to read key-presses from a 3x4 matrix keypad
   and produce valid dates from the input.
   Created by Greg Boucher, June 2018
@@ -13,20 +13,20 @@
 #include "Device.h"  //definition required for access to parent 'Device class' through parent pointer 'p_parent'
 
 namespace Device_lib {
-  
+
     KeypadDate::KeypadDate(Device* tp_parent)
     :p_parent(tp_parent), keypad{Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS, this)}
     {
         keypad.addEventListener(keypadEvent); //provide function pointer to be called when a
                                               //change of keystate occurs.
-                                                     
+
     }
 
     char KeypadDate::listenForKey() {
         return keypad.getKey();
     }
 
-    static void KeypadDate::keypadEvent(char key, KeypadDate* p_KeypadDate) {   
+    static void KeypadDate::keypadEvent(char key, KeypadDate* p_KeypadDate) {
         KeyState keyState = p_KeypadDate->keypad.getState();
         if (keyState != IDLE) {
             switch (key) {
@@ -61,7 +61,7 @@ namespace Device_lib {
     bool KeypadDate::isValid() {
         return true;
     }
-    
+
     void KeypadDate::keyOne(KeyState keyState) {
         switch (p_parent->deviceState) {
             case e_LOCK: {
@@ -84,7 +84,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyTwo(KeyState keyState) {
@@ -109,7 +109,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyThree(KeyState keyState) {
@@ -134,7 +134,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyFour(KeyState keyState) {
@@ -159,7 +159,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyFive(KeyState keyState) {
@@ -184,7 +184,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keySix(KeyState keyState) {
@@ -209,7 +209,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keySeven(KeyState keyState) {
@@ -234,7 +234,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyEight(KeyState keyState) {
@@ -259,7 +259,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyNine(KeyState keyState) {
@@ -284,7 +284,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyZero(KeyState keyState) {
@@ -309,7 +309,7 @@ namespace Device_lib {
                 }
                 break;
             }
-        } 
+        }
     }
 
     void KeypadDate::keyStar(KeyState keyState) {
@@ -317,7 +317,7 @@ namespace Device_lib {
             case e_LOCK: {
                 switch (keyState) {
                     case PRESSED: {
-                        p_parent->updateDeviceState(e_LOCK);                       
+                        p_parent->updateDeviceState(e_LOCK);
                         break;
                     }
                 }
@@ -326,17 +326,17 @@ namespace Device_lib {
             case e_DATE: {
                 switch (keyState) {
                     case PRESSED: {
-                        p_parent->updateDeviceState(e_DATE);                       
+                        p_parent->updateDeviceState(e_DATE);
                         break;
                     }
                     case HOLD: {
-                        p_parent->updateDeviceState(e_LIST); 
+                        p_parent->updateDeviceState(e_LIST);
                         break;
                     }
                 }
                 break;
             }
-        }      
+        }
     }
 
     void KeypadDate::keyHash(KeyState keyState) {
@@ -360,7 +360,7 @@ namespace Device_lib {
                 switch (keyState) {
                     case HOLD: {
                         if (isValid()) {
-                            Serial.println("VALID DATE: SCANNING ");
+                            Serial.println("(DEBUG) VALID DATE ");
                             p_parent->updateDeviceState(e_SCAN);
                         }
                         break;
@@ -371,14 +371,14 @@ namespace Device_lib {
             case e_SCAN: {
                 switch (keyState) {
                     case RELEASED: {
-                        Serial.println("SCAN RELEASE! ");
+                        Serial.println("(DEBUG) SCAN RELEASED! ");
                         p_parent->updateDeviceState(e_DATE);
                         break;
                     }
                 }
                 break;
             }
-        }      
+        }
     }
 
     //KeypadDate:

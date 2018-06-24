@@ -14,16 +14,14 @@ namespace Device_lib {
     }
 
     String Device::beginScan() {
-        while (deviceState = e_SCAN) {
-            char key = keypadDate.listenForKey();
-            if (deviceState != e_SCAN) break;
-            Device_lib::BarcodeReader barcodeReader;
-            if (barcodeReader.readSlaveSize() > 0) {
-                Serial.print("SLAVE SIZE: ");
-                Serial.println(barcodeReader.getSlaveSize());
-                Serial.print("INDEX SIZE: ");
-                Serial.println(barcodeReader.index);
-                barcodeReader.readSlaveBuffer();
+        Device_lib::BarcodeReader barcodeReader;
+        while (true) {
+            keypadDate.listenForKey();
+            if (deviceState != e_SCAN) {
+                barcodeReader.stopScan();
+                break;
+            }
+            if (barcodeReader.Scan()) {         //turns ON the laser and returns true if a barcode was read
                 return barcodeReader.getBarcode();
             }
         }
@@ -32,7 +30,7 @@ namespace Device_lib {
 
     void Device::updateDeviceState(DeviceState newState) {
         deviceState = newState;
-        Serial.print("DEVICE STATE: ");
+        Serial.print("(DEBUG) DEVICE STATE: ");
         Serial.println(deviceState);
         switch (deviceState) {
             case e_LOCK: {
@@ -48,11 +46,12 @@ namespace Device_lib {
                 break;
             }
             case e_SCAN: {
-               String barcode = beginScan();
+               String barcode = beginScan();     //exits only with barcode or if scan key is released (returns "")
                if (barcode != "") {
                   Serial.println(barcode);
+                  updateDeviceState(e_DATE);
                } else {
-                  Serial.println("No Code ");
+                  Serial.println("(DEBUG) NO CODE ");
                }
                break;
             }
