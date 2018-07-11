@@ -30,9 +30,9 @@
 ||
 */
 
-#ifndef KEYPAD_H
-#define KEYPAD_H
-#include "Key.h"
+#ifndef DEVICE_SRC_KEYPAD_H
+#define DEVICE_SRC_KEYPAD_H
+#include "key.h"
 
 // Arduino versioning.
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -76,7 +76,7 @@ typedef struct {
 #define MAPSIZE 10		// MAPSIZE is the number of rows (times 16 columns)
 #define makeKeymap(x) ((char*)x)
 
-namespace Device_lib {
+namespace device_lib {
     class KeypadDate;       //forward declaration of the parent class - GB
 }
 
@@ -84,7 +84,7 @@ namespace Device_lib {
 class Keypad : public Key {
 public:
 
-	Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols, Device_lib::KeypadDate* p_parent);
+	Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols, device_lib::KeypadDate* p_parent);
  //modified to take pointer of type KeypadDate - GB
 
 	virtual void pin_mode(byte pinNum, byte mode) { pinMode(pinNum, mode); }
@@ -95,7 +95,7 @@ public:
 	Key key[LIST_MAX];
 	unsigned long holdTimer;
 
-  Device_lib::KeypadDate* p_parent;    //pointer to the owner of this Keypad object. - GB
+  device_lib::KeypadDate* p_parent;    //pointer to the owner of this Keypad object. - GB
 	char getKey();
 	bool getKeys();
 	KeyState getState();
@@ -103,7 +103,7 @@ public:
 	bool isPressed(char keyChar);
 	void setDebounceTime(uint);
 	void setHoldTime(uint);
-	void addEventListener(void (*listener)(char, Device_lib::KeypadDate*));  //Modified to pass a pointer to the
+	void addEventListener(void (*listener)(char, device_lib::KeypadDate*));  //Modified to pass a pointer to the
 	                                                                         //parent of the Keypad object
 	                                                                         //calling the event. -GB
 	int findInList(char keyChar);
@@ -126,11 +126,11 @@ private:
 	bool updateList();
 	void nextKeyState(byte n, boolean button);
 	void transitionTo(byte n, KeyState nextState);
-	void (*keypadEventListener)(char, Device_lib::KeypadDate*);     //Modified callback to also pass pointer
+	void (*keypadEventListener)(char, device_lib::KeypadDate*);     //Modified callback to also pass pointer
 	                                                                //to the parent of the Keypad object
                                                                   //using the callback function. -GB
 };
-#endif
+#endif //DEVICE_SRC_KEYPAD_H
 
 /*
 || @changelog

@@ -29,8 +29,8 @@
 ||
 */
 
-#ifndef KEY_H
-#define KEY_H
+#ifndef DEVICE_SRC_KEY_H
+#define DEVICE_SRC_KEY_H
 
 // Arduino versioning.
 #if defined(ARDUINO) && ARDUINO >= 100
@@ -64,7 +64,7 @@ private:
 
 };
 
-#endif
+#endif //DEVICE_SRC_KEY_H
 
 /*
 || @changelog

@@ -3,62 +3,62 @@
   Created by Greg Boucher, June 2018
 */
 
-#include "Device.h"
-#include "BarcodeReader.h"
+#include "device.h"
+#include "barcode_reader.h"
 
-namespace Device_lib {
+namespace device_lib {
 
-    Device::Device()
-        :keypadDate(this)
-    {
-    }
+Device::Device()
+    :keypadDate(this)
+{
+}
 
-    void Device::updateDeviceState(DeviceState newState) {      //changes deviceState and resets appropriate members
-        deviceState = newState;
-        Serial.print("(DEBUG) DEVICE STATE: ");
-        Serial.println(deviceState);
-        switch (deviceState) {
-            case e_LOCK: {
-                keypadDate.clearInputCode();
-                break;
-            }
-            case e_DATE: {
-                keypadDate.clearInputDate();
-                break;
-            }
-            case e_LIST: {
+void Device::updateDeviceState(State state) {    //changes deviceState and resets members
+    deviceState_ = state;
+    Serial.print("(DEBUG) DEVICE STATE: ");
+    Serial.println(deviceState_);
+    switch (deviceState_) {
+        case LOCK: {
+            keypadDate.clearInputCode();
+            break;
+        }
+        case DATE: {
+            keypadDate.clearInputDate();
+            break;
+        }
+        case LIST: {
 
-                break;
+            break;
+        }
+        case SCAN: {    //set when holding the scan key after inputting a valid date
+            String barcode = beginScan();   //(loop)returns only with barcode or key released
+            if (barcode != "") {
+                Serial.println(barcode);
+                updateDeviceState(DATE);
+            } else {
+                Serial.println("(DEBUG) NO CODE ");
             }
-            case e_SCAN: {                                      //set when holding the scan key after inputting a valid date
-               String barcode = beginScan();                    //(loop)returns only with barcode or if scan key is released (returns "")
-               if (barcode != "") {
-                  Serial.println(barcode);
-                  updateDeviceState(e_DATE);
-               } else {
-                  Serial.println("(DEBUG) NO CODE ");
-               }
-               break;
-            }
+            break;
         }
     }
+}
 
-    String Device::beginScan() {
-        Device_lib::BarcodeReader barcodeReader;
-        while (true) {
-            keypadDate.listenForKey();                          //will trigger callback event if keyState has changed
-            if (deviceState != e_SCAN) {                        //releasing hold of the key initiating the scan will reset the deviceState to e_INPUT
-                barcodeReader.stopScan();                       //hence we turn OFF the Barcode Reader and exit the loop
-                break;
-            }
-            if (barcodeReader.Scan()) {                         //turns ON the Barcode Reader and returns true if a barcode was read
-                return barcodeReader.getBarcode();
-            }
+String Device::beginScan() {
+    device_lib::BarcodeReader barcodeReader;
+    while (true) {
+        keypadDate.listenForKey();      //will trigger callback event if keyState has changed
+        if (deviceState_ != SCAN) {     //releasing hold of scan keywill reset the State to INPUT
+            barcodeReader.stopScan();   //hence we turn OFF the Barcode Reader and exit the loop
+            break;
         }
-        return "";
+        if (barcodeReader.Scan()) {     //turns ON the Barcode Reader, true if a barcode was read
+            return barcodeReader.getBarcode();
+        }
     }
+    return "";
+}
 
-    DeviceState Device::getState() {
-        return deviceState;
-    }
+State const Device::getState() {
+    return deviceState_;
+}
 }

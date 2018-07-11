@@ -3,29 +3,28 @@
   Created by Greg Boucher, June 2018
 */
 
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef DEVICE_SRC_DEVICE_H
+#define DEVICE_SRC_DEVICE_H
 #pragma once
 
-#include "KeypadDate.h"
-#include "e_DeviceState.h"
+#include "keypad_date.h"
+#include "enum_device_state.h"
 
-namespace Device_lib {
+namespace device_lib {
 
-    class Device
-    {
-        public:
-            Device();
+class Device
+{
+    public:
+        Device();
 
-            KeypadDate keypadDate;                  //handles all keypad events
-            DeviceState getState();                 //returns current DeviceState
-            void updateDeviceState(DeviceState);    //changes deviceState and resets appropriate members
+        KeypadDate keypadDate;            //handles all keypad events
+        State const getState();           //returns current DeviceState
+        void updateDeviceState(State);    //changes deviceState and resets appropriate members
 
+    private:
+        State deviceState_ = State::DATE;  //start at LOCK
+        String beginScan();    //performs scan, exit if the scan key is released, or barcode scanned
 
-        private:
-            DeviceState deviceState = e_DATE;       //start at e_LOCK
-            String beginScan();                     //performs a barcode scan, exiting only if the scan key is released, or a barcode is scanned
-
-    };
+};
 }
-#endif //DEVICE_H
+#endif //DEVICE_SRC_DEVICE_H

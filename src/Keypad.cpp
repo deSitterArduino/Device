@@ -29,9 +29,9 @@
 || #
 ||
 */
-#include "Keypad.h"
+#include "keypad.h"
 // <<constructor>> Allows custom keymap, pin configuration, and keypad sizes.
-Keypad::Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols, Device_lib::KeypadDate* p_parentPointer) {
+Keypad::Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols, device_lib::KeypadDate* p_parentPointer) {
 	p_parent = p_parentPointer;    //pointer to the parent of this Keypad object. - GB
 	rowPins = row;
 	columnPins = col;
@@ -59,7 +59,7 @@ char Keypad::getKey() {
 
 	if (getKeys() && key[0].stateChanged && (key[0].kstate==PRESSED))
 		return key[0].kchar;
-	
+
 	single_key = false;
 
 	return NO_KEY;
@@ -240,7 +240,7 @@ void Keypad::setHoldTime(uint hold) {
     holdTime = hold;
 }
 
-void Keypad::addEventListener(void (*listener)(char, Device_lib::KeypadDate*)){
+void Keypad::addEventListener(void (*listener)(char, device_lib::KeypadDate*)){
 	keypadEventListener = listener;
 }
 
