@@ -1,3 +1,8 @@
+//**************************************************************************************************
+//
+//    Copyright 2018, Greg Boucher, All rights reserved.
+//**************************************************************************************************
+
 #include "device.h"
 
 device_lib::Device device;
@@ -8,6 +13,6 @@ void setup() {
 
 void loop() {
 
-device.keypadDate.listenForKey();
+device.listenForKey();
 
 }

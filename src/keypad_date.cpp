@@ -1,43 +1,34 @@
-/*
-  KeypadDate.cpp - Wrapper of M. Stanley amd A. Brevig's Keypad Libiary v3.1
-  Changed callback eventListener function's arguments to include a pointer to
-  the instance of this class to which the instance of the Keypad object calling eventListener
-  belongs. This is for the purpose of referencing non-static members directly from the static
-  callback function.
-
-  Used to read key-presses from a 3x4 matrix keypad
-  and produce valid dates from the input.
-  Created by Greg Boucher, June 2018
-*/
+//**************************************************************************************************
+//    KeypadDate.cpp - Wrapper of M. Stanley amd A. Brevig's Keypad Libiary v3.1
+//    Changed callback eventListener function's arguments to include a pointer to
+//    the instance of this class to which the instance of the Keypad object calling eventListener
+//    belongs. This is for the purpose of referencing non-static members directly from the static
+//    callback function.
+//
+//    Used to read key-presses from a 3x4 matrix keypad and produce valid dates from the input.
+//    Copyright 2018, Greg Boucher, All rights reserved.
+//**************************************************************************************************
 
 #include "keypad_date.h"
 #include "device.h"
-//definition required for access to parent 'Device class' through parent pointer 'p_parent'
+//definition required for access to parent 'Device class' through parent pointer '_parent'
 
 namespace device_lib {
 
 KeypadDate::KeypadDate(Device* parent)
-:parent_(parent), keypad{Keypad(makeKeymap(keys), rowPins, colPins, ROWS_s, COLS_s, this)}
+:_parent(parent), _keypad{Keypad(makeKeymap(keys), _rowPins, _colPins, _ROWS, _COLS, this)}
 {
-    keypad.addEventListener(keypadEvent); //provide function pointer to be called when a
+    _keypad.addEventListener(keypadEvent); //provide function pointer to be called when a
     //change of keystate occurs.
 }
 
-void KeypadDate::clearInputCode() {
-    inputCode_ = "";
-}
-
-void KeypadDate::clearInputDate() {
-    inputDate_ = "";
-}
-
 char KeypadDate::listenForKey() {
-    return keypad.getKey();
+    return _keypad.getKey();
 }
 
 //callback function from keypad
 static void KeypadDate::keypadEvent(char key, KeypadDate* keypadDate) {
-    KeyState keyState = keypadDate->keypad.getState();
+    KeyState keyState = keypadDate->_keypad.getState();
     if (keyState != IDLE) {
         switch (key) {
             case '1': keypadDate->keyOne(keyState);break;
@@ -57,14 +48,14 @@ static void KeypadDate::keypadEvent(char key, KeypadDate* keypadDate) {
 }
 
 void KeypadDate::addToLockCode(char key) {
-    if (inputCode_.length() < 4) {
-        inputCode_ = inputCode_ + key;      //TODO: fix this
+    if (_inputCode.length() < 4) {
+        _inputCode += key;
     }
 }
 
 void KeypadDate::addToDate(char key) {
-    if (inputDate_.length() < 6) {
-        inputDate_ = inputDate_ + key;      //TODO: fix this
+    if (_inputDate.length() < 6) {
+        _inputDate += key;
     }
 }
 
@@ -73,12 +64,12 @@ bool KeypadDate::isValid() {
 }
 
 void KeypadDate::keyOne(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('1');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -88,7 +79,7 @@ void KeypadDate::keyOne(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('1');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -98,12 +89,12 @@ void KeypadDate::keyOne(KeyState keyState) {
 }
 
 void KeypadDate::keyTwo(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('2');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -113,7 +104,7 @@ void KeypadDate::keyTwo(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('2');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -123,12 +114,12 @@ void KeypadDate::keyTwo(KeyState keyState) {
 }
 
 void KeypadDate::keyThree(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('3');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -138,7 +129,7 @@ void KeypadDate::keyThree(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('3');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -148,12 +139,12 @@ void KeypadDate::keyThree(KeyState keyState) {
 }
 
 void KeypadDate::keyFour(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('4');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -163,7 +154,7 @@ void KeypadDate::keyFour(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('4');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -173,12 +164,12 @@ void KeypadDate::keyFour(KeyState keyState) {
 }
 
 void KeypadDate::keyFive(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('5');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -188,7 +179,7 @@ void KeypadDate::keyFive(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('5');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -198,12 +189,12 @@ void KeypadDate::keyFive(KeyState keyState) {
 }
 
 void KeypadDate::keySix(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('6');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -213,7 +204,7 @@ void KeypadDate::keySix(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('6');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -223,12 +214,12 @@ void KeypadDate::keySix(KeyState keyState) {
 }
 
 void KeypadDate::keySeven(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('7');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -238,7 +229,7 @@ void KeypadDate::keySeven(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('7');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -248,12 +239,12 @@ void KeypadDate::keySeven(KeyState keyState) {
 }
 
 void KeypadDate::keyEight(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('8');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -263,7 +254,7 @@ void KeypadDate::keyEight(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('8');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -273,12 +264,12 @@ void KeypadDate::keyEight(KeyState keyState) {
 }
 
 void KeypadDate::keyNine(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('9');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -288,7 +279,7 @@ void KeypadDate::keyNine(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('9');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -298,12 +289,12 @@ void KeypadDate::keyNine(KeyState keyState) {
 }
 
 void KeypadDate::keyZero(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
                     addToLockCode('0');
-                    Serial.println(inputCode_);
+                    Serial.println(_inputCode);
                     break;
                 }
             }
@@ -313,7 +304,7 @@ void KeypadDate::keyZero(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     addToDate('0');
-                    Serial.println(inputDate_);
+                    Serial.println(_inputDate);
                     break;
                 }
             }
@@ -323,11 +314,11 @@ void KeypadDate::keyZero(KeyState keyState) {
 }
 
 void KeypadDate::keyStar(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
-                    parent_->updateDeviceState(LOCK);
+                    _parent->updateDeviceState(LOCK);
                     break;
                 }
             }
@@ -336,11 +327,11 @@ void KeypadDate::keyStar(KeyState keyState) {
         case DATE: {
             switch (keyState) {
                 case PRESSED: {
-                    parent_->updateDeviceState(DATE);
+                    _parent->updateDeviceState(DATE);
                     break;
                 }
                 case HOLD: {
-                    parent_->updateDeviceState(LIST);
+                    _parent->updateDeviceState(LIST);
                     break;
                 }
             }
@@ -350,16 +341,16 @@ void KeypadDate::keyStar(KeyState keyState) {
 }
 
 void KeypadDate::keyHash(KeyState keyState) {
-    switch (parent_->getState()) {
+    switch (_parent->getState()) {
         case LOCK: {
             switch (keyState) {
                 case PRESSED: {
-                    if (inputCode_.equals(correctCode_)) {
+                    if (_inputCode.equals(_correctCode)) {
                         Serial.println("CORRECT CODE ");
-                        parent_->updateDeviceState(DATE);
+                        _parent->updateDeviceState(DATE);
                     } else {
                         Serial.println("INVALID CODE ");
-                        parent_->updateDeviceState(LOCK);
+                        _parent->updateDeviceState(LOCK);
                     }
                     break;
                 }
@@ -371,7 +362,7 @@ void KeypadDate::keyHash(KeyState keyState) {
                 case HOLD: {
                     if (isValid()) {
                         Serial.println("(DEBUG) VALID DATE ");
-                        parent_->updateDeviceState(SCAN);
+                        _parent->updateDeviceState(SCAN);
                     }
                     break;
                 }
@@ -382,7 +373,7 @@ void KeypadDate::keyHash(KeyState keyState) {
             switch (keyState) {
                 case RELEASED: {
                     Serial.println("(DEBUG) SCAN RELEASED! ");
-                    parent_->updateDeviceState(DATE);
+                    _parent->updateDeviceState(DATE);
                     break;
                 }
             }

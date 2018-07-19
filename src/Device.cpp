@@ -1,7 +1,7 @@
-/*
-
-  Created by Greg Boucher, June 2018
-*/
+//**************************************************************************************************
+//
+//    Copyright 2018, Greg Boucher, All rights reserved.
+//**************************************************************************************************
 
 #include "device.h"
 #include "barcode_reader.h"
@@ -9,21 +9,25 @@
 namespace device_lib {
 
 Device::Device()
-    :keypadDate(this)
+    :_keypadDate(this)
 {
 }
 
+char Device::listenForKey() {
+    return _keypadDate.listenForKey();
+}
+
 void Device::updateDeviceState(State state) {    //changes deviceState and resets members
-    deviceState_ = state;
+    _state = state;
     Serial.print("(DEBUG) DEVICE STATE: ");
-    Serial.println(deviceState_);
-    switch (deviceState_) {
+    Serial.println(_state);
+    switch (_state) {
         case LOCK: {
-            keypadDate.clearInputCode();
+            _keypadDate.clearInputCode();
             break;
         }
         case DATE: {
-            keypadDate.clearInputDate();
+            _keypadDate.clearInputDate();
             break;
         }
         case LIST: {
@@ -31,7 +35,7 @@ void Device::updateDeviceState(State state) {    //changes deviceState and reset
             break;
         }
         case SCAN: {    //set when holding the scan key after inputting a valid date
-            String barcode = beginScan();   //(loop)returns only with barcode or key released
+            String barcode = beginScan();   //(loop)returns only with barcode or scan key released
             if (barcode != "") {
                 Serial.println(barcode);
                 updateDeviceState(DATE);
@@ -44,10 +48,10 @@ void Device::updateDeviceState(State state) {    //changes deviceState and reset
 }
 
 String Device::beginScan() {
-    device_lib::BarcodeReader barcodeReader;
+    BarcodeReader barcodeReader;
     while (true) {
-        keypadDate.listenForKey();      //will trigger callback event if keyState has changed
-        if (deviceState_ != SCAN) {     //releasing hold of scan keywill reset the State to INPUT
+        _keypadDate.listenForKey();      //will trigger callback event if keyState has changed
+        if (_state != SCAN) {     //releasing hold of scan key will reset the State to INPUT
             barcodeReader.stopScan();   //hence we turn OFF the Barcode Reader and exit the loop
             break;
         }
@@ -56,9 +60,5 @@ String Device::beginScan() {
         }
     }
     return "";
-}
-
-State const Device::getState() {
-    return deviceState_;
 }
 }

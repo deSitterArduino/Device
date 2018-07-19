@@ -1,7 +1,7 @@
-/*
-
-  Created by Greg Boucher, June 2018
-*/
+//**************************************************************************************************
+//
+//    Copyright 2018, Greg Boucher, All rights reserved.
+//**************************************************************************************************
 
 #ifndef DEVICE_SRC_ENUM_DEVICESTATE_H
 #define DEVICE_SRC_ENUM_DEVICESTATE_H

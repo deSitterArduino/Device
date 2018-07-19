@@ -1,23 +1,19 @@
-/*
-BarcodeReader.cpp - Library for reading barcodes from a
-HobbyTronics USB host controller via an I2C bus.
-Created by Greg Boucher, June 2018
-*/
+//**************************************************************************************************
+//    BarcodeReader.cpp - Library for reading barcodes from a
+//    HobbyTronics USB host controller via an I2C bus.
+//    Copyright 2018, Greg Boucher, All rights reserved.
+//**************************************************************************************************
 
 #include "barcode_reader.h"
 
 namespace device_lib {
 
 BarcodeReader::BarcodeReader()
-    :hostBuffer_{""},
-    slaveSize_{0}
+    :_hostBuffer{""},
+    _slaveSize{0}
 {
     clearSlaveBuffer();
-    pinMode(scanPin_, OUTPUT);
-}
-
-void BarcodeReader::clearHostBuffer() {
-    hostBuffer_ = "";
+    pinMode(_scanPin, OUTPUT);
 }
 
 void BarcodeReader::clearSlaveBuffer() {    //clear the slave buffer by reading all available bytes
@@ -30,33 +26,33 @@ void BarcodeReader::clearSlaveBuffer() {    //clear the slave buffer by reading 
 
 int BarcodeReader::readSlaveSize() {
     Wire.begin();
-    Wire.beginTransmission(slaveAddress_);
-    Wire.write(sizeRegister_);
+    Wire.beginTransmission(_slaveAddress);
+    Wire.write(_sizeRegister);
     Wire.endTransmission();
-    Wire.requestFrom(slaveAddress_, 1);
+    Wire.requestFrom(_slaveAddress, 1);
     while (Wire.available())
     {
-        slaveSize_ = Wire.read();
+        _slaveSize = Wire.read();
     }
-    return (slaveSize_ > 0) ? slaveSize_ : slaveSize_ = 0;
+    return (_slaveSize > 0) ? _slaveSize : _slaveSize = 0;
 }
 
 void BarcodeReader::readSlaveBuffer() {
     clearHostBuffer();
-    Wire.beginTransmission(slaveAddress_);
-    Wire.write(bufferRegister_);
+    Wire.beginTransmission(_slaveAddress);
+    Wire.write(_bufferRegister);
     Wire.endTransmission();
-    Wire.requestFrom(slaveAddress_, slaveSize_);
+    Wire.requestFrom(_slaveAddress, _slaveSize);
     while (Wire.available())    //only reads max 32bytes at a time
     {
-        --slaveSize_;
-        hostBuffer_ += char(Wire.read());
+        --_slaveSize;
+        _hostBuffer += char(Wire.read());
     }
-    if (slaveSize_ > 0) readSlaveBuffer();    //keep calling this function until all bytes are read
+    if (_slaveSize > 0) readSlaveBuffer();    //keep calling this function until all bytes are read
 }
 
 bool BarcodeReader::Scan() {
-    if (digitalRead(scanPin_) == LOW) digitalWrite(scanPin_, HIGH);
+    if (digitalRead(_scanPin) == LOW) digitalWrite(_scanPin, HIGH);
     int sizeCheck = readSlaveSize();
     if (sizeCheck > 0) {
         stopScan();
@@ -73,15 +69,7 @@ bool BarcodeReader::Scan() {
 }
 
 void BarcodeReader::stopScan() {
-    digitalWrite(scanPin_, LOW);
-}
-
-byte const BarcodeReader::getSlaveSize() {
-    return slaveSize_;
-}
-
-String const BarcodeReader::getBarcode() {
-    return hostBuffer_;
+    digitalWrite(_scanPin, LOW);
 }
 
 bool BarcodeReader::isValid() {
