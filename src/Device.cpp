@@ -55,7 +55,7 @@ String Device::beginScan() {
             barcodeReader.stopScan();   //hence we turn OFF the Barcode Reader and exit the loop
             break;
         }
-        if (barcodeReader.Scan()) {     //turns ON the Barcode Reader, true if a barcode was read
+        if (barcodeReader.scan()) {     //turns ON the Barcode Reader, true if a barcode was read
             return barcodeReader.getBarcode();
         }
     }

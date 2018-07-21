@@ -51,7 +51,7 @@ void BarcodeReader::readSlaveBuffer() {
     if (_slaveSize > 0) readSlaveBuffer();    //keep calling this function until all bytes are read
 }
 
-bool BarcodeReader::Scan() {
+bool BarcodeReader::scan() {
     if (digitalRead(_scanPin) == LOW) digitalWrite(_scanPin, HIGH);
     int sizeCheck = readSlaveSize();
     if (sizeCheck > 0) {

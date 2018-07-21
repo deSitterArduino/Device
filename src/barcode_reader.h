@@ -19,7 +19,7 @@ class BarcodeReader
         BarcodeReader();            //the slave buffer is cleared upon construction
         String const getBarcode() {return _hostBuffer;};
         byte const getSlaveSize() {return _slaveSize;};
-        bool Scan();                //(I2C)turns ON Barcode Scanner, true if barcode read
+        bool scan();                //(I2C)turns ON Barcode Scanner, true if barcode read
         void stopScan();            //turns OFF the Barcode Scanner
                                     //TODO reduce to one function toggleScan()
 
