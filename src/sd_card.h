@@ -18,19 +18,19 @@ class SdCard
     public:
         SdCard();
 
-        void appendEntry(String, String);
-        void createDummy();
-        void deleteEntry(int);
-        void readFile();
-        void deleteFile();
-        void readBack();
+        void append_record(const String, const String);
+        void delete_file();
+
+        void delete_record(int);     //TODO
+        void read_file();    //DEBUG
 
     private:
         SdFat _sd;
         const char _path[9];
-        int fetchNumEntries(SdFile&);
-        void writeNumEntries(SdFile&, int);
-        static const byte headerSize = 8;  //bytes reserved at top of file, stores current # entries
+        int parse_header(SdFile&);
+        void write_header(SdFile&, const int);
+        static const byte _headerSize = 8;  //bytes reserved at top of file, stores current # records
+                                            //a further two bytes are also reserved for \r and \n
 
 };
 }

@@ -18,6 +18,6 @@ void setup() {
 
 void loop() {
 
-device.listenForKey();
+device.listen_for_key();
 
 }

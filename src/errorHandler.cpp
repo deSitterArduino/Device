@@ -7,7 +7,7 @@
 
 namespace device_lib {
 
-void reportError(String string) {
+void report_error(String string) {
     Serial.println(string);
 }
 

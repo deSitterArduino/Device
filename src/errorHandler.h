@@ -11,7 +11,7 @@
 
 namespace device_lib {
 
-void reportError(String string);
+void report_error(String string);
 
 }
 #endif //DEVICE_SRC_ERRORHANDLER_H

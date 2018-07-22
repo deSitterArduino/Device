@@ -17,15 +17,15 @@ class Device
     public:
         Device();
 
-        char listenForKey();              //calls keypadDate's listenForKey(). Call in loop()
-        State const getState() {return _state;};
-        void updateDeviceState(State);    //changes deviceState and resets appropriate members
-        void temp();
+        char listen_for_key();              //calls keypadDate's listenForKey(). Call in loop()
+        State const get_state() {return _state;};
+        void update_device_state(State);    //changes deviceState and resets appropriate members
+        void temp();    //DEBUG
 
     private:
         KeypadDate _keypadDate;            //handles all keypad events
         State _state = State::DATE; //start at LOCK
-        String beginScan();    //performs scan, exit if the scan key is released, or barcode scanned
+        String begin_scan();    //performs scan, exit if the scan key is released, or barcode scanned
 
 };
 }

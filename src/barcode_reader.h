@@ -17,18 +17,18 @@ class BarcodeReader
 {
     public:
         BarcodeReader();            //the slave buffer is cleared upon construction
-        String const getBarcode() {return _hostBuffer;};
-        byte const getSlaveSize() {return _slaveSize;};
+        String const get_barcode() {return _hostBuffer;};
+        byte const get_slave_size() {return _slaveSize;};
         bool scan();                //(I2C)turns ON Barcode Scanner, true if barcode read
-        void stopScan();            //turns OFF the Barcode Scanner
+        void stop_scan();            //turns OFF the Barcode Scanner
                                     //TODO reduce into one function toggleScan()
 
     private:
-        void clearHostBuffer() {_hostBuffer = "";};
-        void clearSlaveBuffer();    //(I2C) reads chars from slave into hostBuffer, then clears
-        bool isValid();             //TODO: Is there an easy way to check if a barcode is valid?
-        int readSlaveSize();        //(I2C)return the size of the slave buffer
-        void readSlaveBuffer();     //(I2C)read the contents of the slave buffer into hostBuffer
+        void clear_host_buffer() {_hostBuffer = "";};
+        void clear_slave_buffer();    //(I2C) reads chars from slave into hostBuffer, then clears
+        bool is_valid();             //TODO: Is there an easy way to check if a barcode is valid?
+        int read_slave_size();        //(I2C)return the size of the slave buffer
+        void read_slave_buffer();     //(I2C)read the contents of the slave buffer into hostBuffer
         String _hostBuffer;          //The slave uses a 256 byte buffer
         byte _slaveSize;             //size(bytes) of the slaves current buffer
         byte _scanPin = 9;           //pin to transistor which switches ON/OFF the Barcode Reader

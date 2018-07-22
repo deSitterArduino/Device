@@ -22,21 +22,21 @@ void Device::temp() {
     //sdCard.readFile();
 }
 
-char Device::listenForKey() {
-    return _keypadDate.listenForKey();
+char Device::listen_for_key() {
+    return _keypadDate.listen_for_key();
 }
 
-void Device::updateDeviceState(State state) {    //changes deviceState and resets members
+void Device::update_device_state(State state) {    //changes deviceState and resets members
     _state = state;
     Serial.print(F("(DEBUG) DEVICE STATE: "));
     Serial.println(_state);
     switch (_state) {
         case LOCK: {
-            _keypadDate.clearInputCode();
+            _keypadDate.clear_input_code();
             break;
         }
         case DATE: {
-            _keypadDate.clearInputDate();
+            _keypadDate.clear_input_date();
             break;
         }
         case LIST: {
@@ -44,13 +44,13 @@ void Device::updateDeviceState(State state) {    //changes deviceState and reset
             break;
         }
         case SCAN: {    //set when holding the scan key after inputting a valid date
-            String barcode = beginScan();   //(loop)returns only with barcode or scan key released
+            String barcode = begin_scan();   //(loop)returns only with barcode or scan key released
             if (barcode != "") {
                 Serial.println(barcode);
                 SdCard sdCard;
-                sdCard.appendEntry(_keypadDate.getDate(), barcode);
-                sdCard.readFile(); //DEBUG
-                updateDeviceState(DATE);
+                sdCard.append_record(_keypadDate.get_date(), barcode);
+                sdCard.read_file(); //DEBUG
+                update_device_state(DATE);
             } else {
                 Serial.println(F("(DEBUG) NO CODE "));
             }
@@ -59,16 +59,16 @@ void Device::updateDeviceState(State state) {    //changes deviceState and reset
     }
 }
 
-String Device::beginScan() {
+String Device::begin_scan() {
     BarcodeReader barcodeReader;
     while (true) {
-        _keypadDate.listenForKey();      //will trigger callback event if keyState has changed
+        _keypadDate.listen_for_key();      //will trigger callback event if keyState has changed
         if (_state != SCAN) {     //releasing hold of scan key will reset the State to INPUT
-            barcodeReader.stopScan();   //hence we turn OFF the Barcode Reader and exit the loop
+            barcodeReader.stop_scan();   //hence we turn OFF the Barcode Reader and exit the loop
             break;
         }
         if (barcodeReader.scan()) {     //turns ON the Barcode Reader, true if a barcode was read
-            return barcodeReader.getBarcode();
+            return barcodeReader.get_barcode();
         }
     }
     return "";

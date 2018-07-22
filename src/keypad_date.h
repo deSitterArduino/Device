@@ -23,20 +23,20 @@ class KeypadDate
     public:
         KeypadDate(Device*);
 
-        char listenForKey();   //calls keypad.getKey() in loop, so that callback event can be thrown
-        void clearInputCode() {_inputCode = "";};
-        void clearInputDate() {_inputDate = "";};
-        String getDate() {return _inputDate;};
+        char listen_for_key();  //calls keypad.getKey() in loop, so that callback event can be thrown
+        void clear_input_code() {_code = "";};
+        void clear_input_date() {_date = "";};
+        String get_date() {return _date;};
 
     private:
-        void addToDate(char);
-        void addToLockCode(char);
-        bool isValid();
+        void append_date(char);
+        void append_lockcode(char);
+        bool is_valid();
 
         Device* _parent;
-        String _inputCode = "";
+        String _code = "";
         String const _correctCode = "3663";    //food
-        String _inputDate = "";
+        String _date = "";
         static const byte _ROWS = 4;
         static const byte _COLS = 3;
         char keys[_ROWS][_COLS] = {
@@ -50,19 +50,19 @@ class KeypadDate
 
         Keypad _keypad;
 
-        static void keypadEvent(char, KeypadDate*);
-        void keyOne(KeyState);
-        void keyTwo(KeyState);
-        void keyThree(KeyState);
-        void keyFour(KeyState);
-        void keyFive(KeyState);
-        void keySix(KeyState);
-        void keySeven(KeyState);
-        void keyEight(KeyState);
-        void keyNine(KeyState);
-        void keyZero(KeyState);
-        void keyStar(KeyState);
-        void keyHash(KeyState);
+        static void keypad_event(char, KeypadDate*);
+        void key_one(KeyState);
+        void key_two(KeyState);
+        void key_three(KeyState);
+        void key_four(KeyState);
+        void key_five(KeyState);
+        void key_six(KeyState);
+        void key_seven(KeyState);
+        void key_eight(KeyState);
+        void key_nine(KeyState);
+        void key_zero(KeyState);
+        void key_star(KeyState);
+        void key_hash(KeyState);
 };
 }
 #endif //DEVICE_SRC_KEYPADDATE_H
