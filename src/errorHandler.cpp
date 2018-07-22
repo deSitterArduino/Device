@@ -3,21 +3,12 @@
 //    Copyright 2018, Greg Boucher, All rights reserved.
 //**************************************************************************************************
 
-#include "device.h"
+#include "errorHandler.h"
 
-device_lib::Device device;
+namespace device_lib {
 
-void setup() {
-    Serial.begin(9600);
-    Serial.print(F("Type any character to start\n"));
-    while (!Serial.available()) {
-        //do nothing
-    }
-    device.temp();
+void reportError(String string) {
+    Serial.println(string);
 }
-
-void loop() {
-
-device.listenForKey();
 
 }

@@ -5,6 +5,7 @@
 
 #include "device.h"
 #include "barcode_reader.h"
+#include "sd_card.h"
 
 namespace device_lib {
 
@@ -13,13 +14,21 @@ Device::Device()
 {
 }
 
+void Device::temp() {
+    SdCard sdCard;
+    //sdCard.readBack();
+    //sdCard.readFile();
+    //sdCard.deleteFile();
+    //sdCard.readFile();
+}
+
 char Device::listenForKey() {
     return _keypadDate.listenForKey();
 }
 
 void Device::updateDeviceState(State state) {    //changes deviceState and resets members
     _state = state;
-    Serial.print("(DEBUG) DEVICE STATE: ");
+    Serial.print(F("(DEBUG) DEVICE STATE: "));
     Serial.println(_state);
     switch (_state) {
         case LOCK: {
@@ -38,9 +47,12 @@ void Device::updateDeviceState(State state) {    //changes deviceState and reset
             String barcode = beginScan();   //(loop)returns only with barcode or scan key released
             if (barcode != "") {
                 Serial.println(barcode);
+                SdCard sdCard;
+                sdCard.appendEntry(_keypadDate.getDate(), barcode);
+                sdCard.readFile(); //DEBUG
                 updateDeviceState(DATE);
             } else {
-                Serial.println("(DEBUG) NO CODE ");
+                Serial.println(F("(DEBUG) NO CODE "));
             }
             break;
         }

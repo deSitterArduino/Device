@@ -38,6 +38,7 @@ int BarcodeReader::readSlaveSize() {
 }
 
 void BarcodeReader::readSlaveBuffer() {
+    char c = ' ';
     clearHostBuffer();
     Wire.beginTransmission(_slaveAddress);
     Wire.write(_bufferRegister);
@@ -46,7 +47,8 @@ void BarcodeReader::readSlaveBuffer() {
     while (Wire.available())    //only reads max 32bytes at a time
     {
         --_slaveSize;
-        _hostBuffer += char(Wire.read());
+        c = char(Wire.read());
+        if (!((c == '\r') | (c == '\n'))) _hostBuffer += c; //ignore tail \r and \n
     }
     if (_slaveSize > 0) readSlaveBuffer();    //keep calling this function until all bytes are read
 }
@@ -56,11 +58,11 @@ bool BarcodeReader::scan() {
     int sizeCheck = readSlaveSize();
     if (sizeCheck > 0) {
         stopScan();
-        Serial.print("(DEBUG) FIRST PASS SIZE: ");
+        Serial.print(F("(DEBUG) FIRST PASS SIZE: "));
         Serial.println(sizeCheck);
         delay(200);    //required to give the buffer on the host controler time to fill
         sizeCheck = readSlaveSize();
-        Serial.print("(DEBUG) SECOND PASS SIZE: ");
+        Serial.print(F("(DEBUG) SECOND PASS SIZE: "));
         Serial.println(sizeCheck);
         readSlaveBuffer();
         return true;

@@ -16,7 +16,7 @@
 namespace device_lib {
 
 KeypadDate::KeypadDate(Device* parent)
-:_parent(parent), _keypad{Keypad(makeKeymap(keys), _rowPins, _colPins, _ROWS, _COLS, this)}
+    :_parent(parent), _keypad{Keypad(makeKeymap(keys), _rowPins, _colPins, _ROWS, _COLS, this)}
 {
     _keypad.addEventListener(keypadEvent); //provide function pointer to be called when a
     //change of keystate occurs.
@@ -346,10 +346,10 @@ void KeypadDate::keyHash(KeyState keyState) {
             switch (keyState) {
                 case PRESSED: {
                     if (_inputCode.equals(_correctCode)) {
-                        Serial.println("CORRECT CODE ");
+                        Serial.println(F("CORRECT CODE "));
                         _parent->updateDeviceState(DATE);
                     } else {
-                        Serial.println("INVALID CODE ");
+                        Serial.println(F("INVALID CODE "));
                         _parent->updateDeviceState(LOCK);
                     }
                     break;
@@ -361,7 +361,7 @@ void KeypadDate::keyHash(KeyState keyState) {
             switch (keyState) {
                 case HOLD: {
                     if (isValid()) {
-                        Serial.println("(DEBUG) VALID DATE ");
+                        Serial.println(F("(DEBUG) VALID DATE "));
                         _parent->updateDeviceState(SCAN);
                     }
                     break;
@@ -372,7 +372,7 @@ void KeypadDate::keyHash(KeyState keyState) {
         case SCAN: {
             switch (keyState) {
                 case RELEASED: {
-                    Serial.println("(DEBUG) SCAN RELEASED! ");
+                    Serial.println(F("(DEBUG) SCAN RELEASED! "));
                     _parent->updateDeviceState(DATE);
                     break;
                 }

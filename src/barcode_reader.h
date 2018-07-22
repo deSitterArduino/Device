@@ -21,7 +21,7 @@ class BarcodeReader
         byte const getSlaveSize() {return _slaveSize;};
         bool scan();                //(I2C)turns ON Barcode Scanner, true if barcode read
         void stopScan();            //turns OFF the Barcode Scanner
-                                    //TODO reduce to one function toggleScan()
+                                    //TODO reduce into one function toggleScan()
 
     private:
         void clearHostBuffer() {_hostBuffer = "";};

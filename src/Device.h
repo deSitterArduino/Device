@@ -20,6 +20,7 @@ class Device
         char listenForKey();              //calls keypadDate's listenForKey(). Call in loop()
         State const getState() {return _state;};
         void updateDeviceState(State);    //changes deviceState and resets appropriate members
+        void temp();
 
     private:
         KeypadDate _keypadDate;            //handles all keypad events

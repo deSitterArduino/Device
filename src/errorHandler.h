@@ -3,21 +3,15 @@
 //    Copyright 2018, Greg Boucher, All rights reserved.
 //**************************************************************************************************
 
-#include "device.h"
+#ifndef DEVICE_SRC_ERRORHANDLER_H
+#define DEVICE_SRC_ERRORHANDLER_H
+#pragma once
 
-device_lib::Device device;
+#include "Arduino.h"
 
-void setup() {
-    Serial.begin(9600);
-    Serial.print(F("Type any character to start\n"));
-    while (!Serial.available()) {
-        //do nothing
-    }
-    device.temp();
-}
+namespace device_lib {
 
-void loop() {
-
-device.listenForKey();
+void reportError(String string);
 
 }
+#endif //DEVICE_SRC_ERRORHANDLER_H

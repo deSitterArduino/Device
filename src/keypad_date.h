@@ -26,6 +26,7 @@ class KeypadDate
         char listenForKey();   //calls keypad.getKey() in loop, so that callback event can be thrown
         void clearInputCode() {_inputCode = "";};
         void clearInputDate() {_inputDate = "";};
+        String getDate() {return _inputDate;};
 
     private:
         void addToDate(char);
