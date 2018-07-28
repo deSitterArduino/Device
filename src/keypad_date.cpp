@@ -110,6 +110,15 @@ void KeypadDate::key_two(KeyState keyState) {
             }
             break;
         }
+        case LIST: {
+            switch (keyState) {
+                case PRESSED: {
+                    
+                    break;
+                }
+            }
+            break;
+        }
     }
 }
 
@@ -332,6 +341,15 @@ void KeypadDate::key_star(KeyState keyState) {
                 }
                 case HOLD: {
                     _parent->update_device_state(LIST);
+                    break;
+                }
+            }
+            break;
+        }
+        case LIST: {
+            switch (keyState) {
+                case HOLD: {
+                    _parent->update_device_state(DATE);
                     break;
                 }
             }

@@ -5,7 +5,6 @@
 
 #include "device.h"
 #include "barcode_reader.h"
-#include "sd_card.h"
 
 namespace device_lib {
 
@@ -16,10 +15,10 @@ Device::Device()
 
 void Device::temp() {
     SdCard sdCard;
-    //sdCard.readBack();
-    //sdCard.readFile();
-    //sdCard.deleteFile();
-    //sdCard.readFile();
+    //sdCard.read_file();
+    sdCard.read_file_reverse();
+    //sdCard.delete_file();
+    //sdCard.read_file();
 }
 
 char Device::listen_for_key() {
@@ -40,7 +39,7 @@ void Device::update_device_state(State state) {    //changes deviceState and res
             break;
         }
         case LIST: {
-
+                begin_list();
             break;
         }
         case SCAN: {    //set when holding the scan key after inputting a valid date
@@ -54,6 +53,19 @@ void Device::update_device_state(State state) {    //changes deviceState and res
             } else {
                 Serial.println(F("(DEBUG) NO CODE "));
             }
+            break;
+        }
+    }
+}
+
+void Device::begin_list() {
+    SdCard sdCard;
+    sdCard.read_last_record();
+    Serial.println(sdCard.get_record_date());
+    Serial.println(sdCard.get_record_barcode());
+    while (true) {
+        _keypadDate.listen_for_key();      //will trigger callback event if keyState has changed
+        if (_state != LIST) {
             break;
         }
     }

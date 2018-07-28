@@ -12,7 +12,7 @@ namespace device_lib {
 SdCard::SdCard()
     :_path{"file.txt"}
 {
-    if (!_sd.begin(10)) report_error("error SD begin");
+    if (!_sd.begin(10)) report_error(Error::SDBEGIN);
 }
 
 void SdCard::append_record(const String date, const String barcode) {
@@ -26,8 +26,38 @@ void SdCard::append_record(const String date, const String barcode) {
         write_header(file, ++records);
         file.close();
     } else {
-        report_error("error opening file to append");
+        report_error(Error::SDAPPEND);
     }
+}
+
+void SdCard::read_last_record() {
+    unsigned long timer = millis();
+    SdFile file(_path, O_READ | O_AT_END);
+    if (file.isOpen()) {
+        file.seekCur(-2);
+        prev_record(file);
+    file.close();
+    Serial.print(F("(DEBUG) REVERSE READ: "));
+    Serial.print(millis() - timer);
+    Serial.println(F("ms"));
+    }
+}
+
+void SdCard::prev_record(SdFile& file) {
+    char c = '\0';
+    while (file.seekCur(-1)) {
+        if ((c = file.peek()) == '\n') {
+            file.seekCur(1);
+            while ((c = file.read()) != ' ') {
+                _record._date += c;
+            }
+            while ((c = file.read()) != '\r') {
+                _record._barcode += c;
+            }
+            break;
+        }
+    }
+
 }
 
 void SdCard::write_header(SdFile& file, const int num) {
@@ -75,24 +105,52 @@ void SdCard::delete_file() {
         file.close();
         Serial.print("(DEBUG) Deleted");
     } else {
-        report_error("error deleting, file does not exist");
+        report_error(Error::SDDELETE);
     }
 }
 
 void SdCard::read_file() {
+    unsigned long timer = millis();
     char c = '\0';
     SdFile file(_path, O_READ);
     if (file.isOpen()) {
         while ((c = file.read()) >= 0) {  //print contents
             Serial.print(c, DEC);
             Serial.print(" ");
-            Serial.print(c);
-            Serial.println(", ");
+            Serial.print(file.curPosition());
+            Serial.print(" ");
+            Serial.println(c);
         }
     file.close();
+    Serial.print(F("(DEBUG) FORWARD READ: "));
+    Serial.print(millis() - timer);
+    Serial.println(F("ms"));
     } else {
-        report_error("error opening file to read");
+        report_error(Error::SDREAD);
     }
+}
+
+void SdCard::read_file_reverse() {
+    unsigned long timerF = millis();
+    char c = '\0';
+    SdFile file(_path, O_READ | O_AT_END);
+    if (file.isOpen()) {
+        Serial.println(file.curPosition());
+        while ((file.seekCur(-1)) && ((c = file.peek()) >= 0)) {  //print contents
+            Serial.print(c, DEC);
+            Serial.print(" ");
+            Serial.print(file.curPosition());
+            Serial.print(" ");
+            Serial.println(c);
+        }
+    file.close();
+    Serial.print(F("(DEBUG) REVERSE READ: "));
+    Serial.print(millis() - timerF);
+    Serial.println(F("ms"));
+    } else {
+        report_error(Error::SDREAD);
+    }
+
 }
 
 

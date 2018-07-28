@@ -9,6 +9,7 @@
 
 #include "keypad_date.h"
 #include "enum_device_state.h"
+#include "sd_card.h"
 
 namespace device_lib {
 
@@ -26,7 +27,7 @@ class Device
         KeypadDate _keypadDate;            //handles all keypad events
         State _state = State::DATE; //start at LOCK
         String begin_scan();    //performs scan, exit if the scan key is released, or barcode scanned
-
+        void begin_list();
 };
 }
 #endif //DEVICE_SRC_DEVICE_H
