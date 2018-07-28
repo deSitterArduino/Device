@@ -32,32 +32,36 @@ void SdCard::append_record(const String date, const String barcode) {
 
 void SdCard::read_last_record() {
     unsigned long timer = millis();
-    SdFile file(_path, O_READ | O_AT_END);
-    if (file.isOpen()) {
-        file.seekCur(-2);
-        prev_record(file);
-    file.close();
-    Serial.print(F("(DEBUG) REVERSE READ: "));
+    _cursor = -1;
+    prev_record();
+    Serial.print(F("(DEBUG) READ LAST RECORD: "));
     Serial.print(millis() - timer);
     Serial.println(F("ms"));
-    }
 }
 
-void SdCard::prev_record(SdFile& file) {
-    char c = '\0';
-    while (file.seekCur(-1)) {
-        if ((c = file.peek()) == '\n') {
-            file.seekCur(1);
-            while ((c = file.read()) != ' ') {
-                _record._date += c;
+void SdCard::prev_record() {
+    SdFile file(_path, O_READ);
+    if (file.isOpen()) {
+        if (_cursor == -1) file.seekEnd();
+        file.seekCur(-2);
+        char c = '\0';
+        while (file.seekCur(-1)) {
+            if ((c = file.peek()) == '\n') {
+                file.seekCur(1);
+                _cursor = file.curPosition();
+                while ((c = file.read()) != ' ') {
+                    _record._date += c;
+                }
+                while ((c = file.read()) != '\r') {
+                    _record._barcode += c;
+                }
+                break;
             }
-            while ((c = file.read()) != '\r') {
-                _record._barcode += c;
-            }
-            break;
         }
+    } else {
+        report_error(Error::SDPREV);
     }
-
+    file.close();
 }
 
 void SdCard::write_header(SdFile& file, const int num) {
@@ -98,16 +102,16 @@ int SdCard::parse_header(SdFile& file) {
     }
 }
 
-void SdCard::delete_file() {
-    if (_sd.exists(_path)) {
-        SdFile file(_path, O_RDWR);
-        file.remove();
-        file.close();
-        Serial.print("(DEBUG) Deleted");
-    } else {
-        report_error(Error::SDDELETE);
-    }
-}
+// void SdCard::delete_file() {
+//     if (_sd.exists(_path)) {
+//         SdFile file(_path, O_RDWR);
+//         file.remove();
+//         file.close();
+//         Serial.print("(DEBUG) Deleted");
+//     } else {
+//         report_error(Error::SDDELETE);
+//     }
+// }
 
 void SdCard::read_file() {
     unsigned long timer = millis();

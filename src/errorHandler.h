@@ -11,7 +11,7 @@
 
 namespace device_lib {
 
-enum Error{ SDBEGIN, SDAPPEND, SDDELETE, SDREAD };
+enum Error{ SDBEGIN, SDAPPEND, SDDELETE, SDREAD, SDPREV };
 
 void report_error(Error);
 

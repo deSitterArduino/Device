@@ -22,7 +22,7 @@ class SdCard
         void append_record(const String, const String);
         void read_last_record();
         void next_record();
-        void prev_record(SdFile&);
+        void prev_record();
         void delete_file();
         String get_record_date() { return _record._date;};
         String get_record_barcode() { return _record._barcode;};
@@ -35,6 +35,7 @@ class SdCard
         SdFat _sd;
         const char _path[9];
         StringPair _record;
+        int _cursor = 0;
         int parse_header(SdFile&);
         void write_header(SdFile&, const int);
         static const byte _headerSize = 8;  //bytes reserved at top of file, stores current # records

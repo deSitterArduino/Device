@@ -25,6 +25,7 @@ class Device
 
     private:
         KeypadDate _keypadDate;            //handles all keypad events
+        SdCard _sdCard;
         State _state = State::DATE; //start at LOCK
         String begin_scan();    //performs scan, exit if the scan key is released, or barcode scanned
         void begin_list();

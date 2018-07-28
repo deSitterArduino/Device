@@ -113,7 +113,7 @@ void KeypadDate::key_two(KeyState keyState) {
         case LIST: {
             switch (keyState) {
                 case PRESSED: {
-                    
+
                     break;
                 }
             }
