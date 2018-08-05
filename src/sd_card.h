@@ -10,7 +10,7 @@
 
 #include "sdlib\SdFat.h"
 #include <SPI.h>
-#include "string_pair.h"
+#include "record.h"
 
 namespace device_lib {
 
@@ -26,6 +26,8 @@ class SdCard
         void delete_file();
         String get_record_date() { return _record._date;};
         String get_record_barcode() { return _record._barcode;};
+        int get_record_number() { return _record._line;};
+        void clear_record() { _record.clear_record();};
 
         void delete_record(int);     //TODO
         void read_file();    //DEBUG
@@ -34,8 +36,7 @@ class SdCard
     private:
         SdFat _sd;
         const char _path[9];
-        StringPair _record;
-        int _cursor = 0;
+        Record _record;
         int parse_header(SdFile&);
         void write_header(SdFile&, const int);
         static const byte _headerSize = 8;  //bytes reserved at top of file, stores current # records

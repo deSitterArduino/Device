@@ -113,7 +113,7 @@ void KeypadDate::key_two(KeyState keyState) {
         case LIST: {
             switch (keyState) {
                 case PRESSED: {
-
+                    _parent->display_prev_record();
                     break;
                 }
             }
@@ -264,6 +264,15 @@ void KeypadDate::key_eight(KeyState keyState) {
                 case PRESSED: {
                     append_date('8');
                     Serial.println(_date);
+                    break;
+                }
+            }
+            break;
+        }
+        case LIST: {
+            switch (keyState) {
+                case PRESSED: {
+                    _parent->display_next_record();
                     break;
                 }
             }

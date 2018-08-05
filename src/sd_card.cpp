@@ -31,24 +31,38 @@ void SdCard::append_record(const String date, const String barcode) {
 }
 
 void SdCard::read_last_record() {
-    unsigned long timer = millis();
-    _cursor = -1;
+    _record._cursor = -1;
     prev_record();
-    Serial.print(F("(DEBUG) READ LAST RECORD: "));
-    Serial.print(millis() - timer);
-    Serial.println(F("ms"));
 }
 
 void SdCard::prev_record() {
+    unsigned long timer = millis();
     SdFile file(_path, O_READ);
     if (file.isOpen()) {
-        if (_cursor == -1) file.seekEnd();
-        file.seekCur(-2);
         char c = '\0';
+        if (_record._cursor == -1) {    //read last record
+            _record._maxLine = parse_header(file);
+            _record._line = _record._maxLine;
+            file.seekEnd(-2);    //TODO what if empty file?
+            Serial.println(F("(DEBUG) SEEK END "));
+        } else {
+            if (file.seekSet(_record._cursor - 2)) {
+                --_record._line;
+                Serial.println(F("(DEBUG) SEEK CURSOR "));
+            }
+        }
         while (file.seekCur(-1)) {
-            if ((c = file.peek()) == '\n') {
-                file.seekCur(1);
-                _cursor = file.curPosition();
+            if ((c = file.peek()) == '\0') {    //hit the meta data, no more records to read
+                _record._cursor = 0;    //will cause seekSet to fail on next iteration
+                ++_record._line;
+                break;
+            }
+            Serial.print(F("(DEBUG) CURSOR POSITION: "));
+            Serial.println(file.curPosition());
+            if ((c = file.peek()) == '\n') {    //prev record found
+                file.seekCur(1);    //advance one, clear the record and begin reading
+                _record._cursor = file.curPosition();    //save the beginning of this record for future use
+                _record.clear_for_read();
                 while ((c = file.read()) != ' ') {
                     _record._date += c;
                 }
@@ -62,6 +76,13 @@ void SdCard::prev_record() {
         report_error(Error::SDPREV);
     }
     file.close();
+    Serial.print(F("(DEBUG) READ LAST RECORD: "));
+    Serial.print(millis() - timer);
+    Serial.println(F("ms"));
+}
+
+void SdCard::next_record() {
+
 }
 
 void SdCard::write_header(SdFile& file, const int num) {

@@ -15,8 +15,8 @@ Device::Device()
 
 void Device::temp() {
     //SdCard sdCard;
-    //sdCard.read_file();
-    //sdCard.read_file_reverse();
+    _sdCard.read_file();
+    _sdCard.read_file_reverse();
     //sdCard.delete_file();
     //sdCard.read_file();
 }
@@ -39,7 +39,8 @@ void Device::update_device_state(State state) {    //changes deviceState and res
             break;
         }
         case LIST: {
-                begin_list();
+            _sdCard.clear_record();
+            begin_list();
             break;
         }
         case SCAN: {    //set when holding the scan key after inputting a valid date
@@ -61,12 +62,21 @@ void Device::begin_list() {
     _sdCard.read_last_record();
     Serial.println(_sdCard.get_record_date());
     Serial.println(_sdCard.get_record_barcode());
-    while (true) {
-        _keypadDate.listen_for_key();      //will trigger callback event if keyState has changed
-        if (_state != LIST) {
-            break;
-        }
-    }
+    Serial.println(_sdCard.get_record_number());
+}
+
+void Device::display_prev_record() {
+    _sdCard.prev_record();
+    Serial.println(_sdCard.get_record_date());
+    Serial.println(_sdCard.get_record_barcode());
+    Serial.println(_sdCard.get_record_number());
+}
+
+void Device::display_next_record() {
+    _sdCard.next_record();
+    Serial.println(_sdCard.get_record_date());
+    Serial.println(_sdCard.get_record_barcode());
+    Serial.println(_sdCard.get_record_number());
 }
 
 String Device::begin_scan() {

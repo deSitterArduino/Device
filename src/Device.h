@@ -22,10 +22,12 @@ class Device
         State const get_state() {return _state;};
         void update_device_state(State);    //changes deviceState and resets appropriate members
         void temp();    //DEBUG
+        SdCard _sdCard;
+        void display_prev_record();
+        void display_next_record();
 
     private:
         KeypadDate _keypadDate;            //handles all keypad events
-        SdCard _sdCard;
         State _state = State::DATE; //start at LOCK
         String begin_scan();    //performs scan, exit if the scan key is released, or barcode scanned
         void begin_list();

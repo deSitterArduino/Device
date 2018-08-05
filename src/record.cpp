@@ -4,13 +4,25 @@
 //    Copyright 2018, Greg Boucher, All rights reserved.
 //**************************************************************************************************
 
-#include "string_pair.h"
+#include "record.h"
 
 namespace device_lib {
 
-StringPair::StringPair()
-    :_date{""}, _barcode{""}
+Record::Record()
 {
+}
+
+void Record::clear_for_read() {
+    _date = "";
+    _barcode = "";
+}
+
+void Record::clear_record() {
+    _date = "";
+    _barcode = "";
+    _cursor = 0;
+    _line = 0;
+    _maxLine = 0;
 }
 
 }

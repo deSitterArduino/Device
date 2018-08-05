@@ -13,7 +13,7 @@ void setup() {
     while (!Serial.available()) {
         //do nothing
     }
-    //device.temp();
+    device.temp();
 }
 
 void loop() {
